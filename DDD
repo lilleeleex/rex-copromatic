@@ -1,0 +1,3 @@
+AGGREGAT est une unité transactionnelle, cad un ensemble d'entités que l'on veut traiter de manière cohérente pour réaliser une action
+Cela doit permettre de réaliser des vérifications
+La transaction doit etre enregistré par le repository racine de l'aggregat afin de garantir la cohésion de l'unité transactionnelle
