@@ -1,3 +1,5 @@
 AGGREGAT est une unité transactionnelle, cad un ensemble d'entités que l'on veut traiter de manière cohérente pour réaliser une action
 Cela doit permettre de réaliser des vérifications
 La transaction doit etre enregistré par le repository racine de l'aggregat afin de garantir la cohésion de l'unité transactionnelle
+
+Les relations des entités permettent de garantir une integrite des données dans la couche bdd / Les aggrégats dans ce contexte peuvent permettre de redéfinir et respecter les limites cross agregats tout en se découplant des la couche bdd
