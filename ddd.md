@@ -97,3 +97,389 @@ Le mot **Produit** existe dans plusieurs contextes, mais ne représente pas forc
 - Un contexte = un langage métier unique.
 - Les modèles sont indépendants entre les contextes.
 - Les échanges entre contextes se font explicitement (événements, API, messages...).
+
+
+
+----------------------------------------------------------------------
+
+# 📚 Domain-Driven Design (DDD) - Fiche de révision
+
+> Le DDD (Domain-Driven Design) consiste à modéliser le logiciel autour du métier plutôt qu'autour de la base de données.
+
+---
+
+# Les briques du DDD
+
+```text
+                    Domaine Métier
+                          │
+              ┌───────────┴───────────┐
+              │                       │
+      Bounded Context         Bounded Context
+              │                       │
+         Agrégats                Agrégats
+              │
+    ┌─────────┴─────────┐
+    │                   │
+ Aggregate Root     Entités
+    │                   │
+    └────── Value Objects
+```
+
+---
+
+# 1. Bounded Context
+
+## Définition
+
+Un **Bounded Context** est un périmètre métier dans lequel un langage est partagé par tous.
+
+Autrement dit :
+
+- les mêmes mots ont la même signification ;
+- les mêmes règles métier s'appliquent ;
+- le modèle est cohérent.
+
+Chaque Bounded Context possède généralement :
+
+- ses entités ;
+- ses agrégats ;
+- ses services métier ;
+- ses repositories.
+
+---
+
+## Exemple
+
+```text
+                 Application E-commerce
+
+      ┌───────────────────────────────────────┐
+      │ Catalogue                             │
+      │---------------------------------------│
+      │ Produit                               │
+      │ Catégorie                             │
+      │ Prix affiché                          │
+      └───────────────────────────────────────┘
+
+                    ↓ API / Events
+
+      ┌───────────────────────────────────────┐
+      │ Stock                                 │
+      │---------------------------------------│
+      │ Produit                               │
+      │ Quantité                              │
+      │ Entrepôt                              │
+      └───────────────────────────────────────┘
+
+                    ↓ API / Events
+
+      ┌───────────────────────────────────────┐
+      │ Facturation                           │
+      │---------------------------------------│
+      │ Client                                │
+      │ Facture                               │
+      │ Paiement                              │
+      └───────────────────────────────────────┘
+```
+
+👉 Le mot **Produit** existe dans plusieurs contextes mais ne représente pas forcément les mêmes informations.
+
+---
+
+# 2. Entité
+
+Une entité possède :
+
+- une identité (ID) ;
+- un cycle de vie ;
+- un état qui peut évoluer.
+
+Exemple :
+
+```text
+Client
+
+id = 15
+nom = Martin
+email = ...
+```
+
+Même si son nom change, c'est toujours le même client.
+
+---
+
+# 3. Value Object
+
+Un Value Object :
+
+- ne possède pas d'identité ;
+- est immutable ;
+- est défini uniquement par ses valeurs.
+
+Exemple :
+
+```text
+Adresse
+
+Rue
+Code postal
+Ville
+Pays
+```
+
+Deux adresses identiques sont considérées comme égales.
+
+---
+
+# 4. Agrégat (Aggregate)
+
+## Définition
+
+Un agrégat est une **frontière de cohérence métier**.
+
+Toutes les données à l'intérieur doivent rester cohérentes après chaque transaction.
+
+```text
+             Aggregate
+
+        Commande
+             │
+     ┌───────┴────────┐
+     │                │
+ LigneCommande   AdresseLivraison
+```
+
+Tout est enregistré dans une seule transaction.
+
+---
+
+## Pourquoi ?
+
+Pour protéger les règles métier.
+
+Exemple :
+
+Une commande :
+
+- doit avoir au moins une ligne ;
+- le total doit être correct ;
+- une ligne ne peut pas avoir une quantité négative.
+
+Toutes ces règles sont vérifiées par l'agrégat.
+
+Ces règles sont appelées **invariants**.
+
+---
+
+# 5. Aggregate Root
+
+Chaque agrégat possède une racine.
+
+```text
+Commande
+│
+├── LigneCommande
+├── LigneCommande
+└── AdresseLivraison
+```
+
+La racine est le seul point d'entrée.
+
+On ne modifie jamais directement :
+
+- LigneCommande
+- AdresseLivraison
+
+On passe toujours par :
+
+```text
+Commande
+```
+
+---
+
+# 6. Repository
+
+Un repository existe uniquement pour la racine de l'agrégat.
+
+```text
+CommandeRepository
+
+save(Commande)
+
+findById(...)
+```
+
+On ne crée jamais :
+
+```text
+LigneCommandeRepository ❌
+
+AdresseRepository ❌
+```
+
+car ces objets appartiennent déjà à l'agrégat.
+
+---
+
+# 7. Les références
+
+## À l'intérieur d'un agrégat
+
+Les objets se référencent directement.
+
+```text
+Commande
+
+ ├── LigneCommande
+ ├── LigneCommande
+ └── AdresseLivraison
+```
+
+---
+
+## Entre deux agrégats
+
+On référence uniquement l'ID.
+
+```text
+Commande
+
+customerId
+```
+
+et non
+
+```text
+Commande
+
+Customer
+```
+
+Pourquoi ?
+
+Pour éviter :
+
+- les grosses transactions ;
+- le couplage ;
+- les dépendances fortes.
+
+---
+
+# 8. Transaction
+
+Une transaction ne traverse jamais plusieurs agrégats.
+
+```text
+             Transaction
+
+Commande
+    │
+    ▼
+CommandeRepository.save()
+
+✔ OK
+```
+
+En revanche :
+
+```text
+Commande
+        │
+        ▼
+Client
+        │
+        ▼
+Stock
+```
+
+❌ plusieurs agrégats dans une même transaction.
+
+Dans ce cas, on utilise généralement :
+
+- des Domain Events ;
+- de la messagerie ;
+- des traitements asynchrones.
+
+---
+
+# 9. Domain Event
+
+Un événement métier indique qu'un fait important vient de se produire.
+
+Exemple :
+
+```text
+CommandeValidée
+```
+
+Le contexte Stock peut écouter :
+
+```text
+CommandeValidée
+```
+
+pour décrémenter le stock.
+
+Le contexte Facturation peut écouter :
+
+```text
+CommandeValidée
+```
+
+pour générer une facture.
+
+Chaque contexte reste indépendant.
+
+---
+
+# Résumé
+
+```text
+Bounded Context
+      │
+      ├── Agrégat
+      │      │
+      │      ├── Aggregate Root
+      │      ├── Entités
+      │      └── Value Objects
+      │
+      ├── Repository
+      │
+      └── Domain Services
+```
+
+---
+
+# Les règles d'or
+
+## Bounded Context
+
+✔ Un langage métier unique.
+
+✔ Les modèles sont indépendants.
+
+✔ Les échanges passent par des API ou des événements.
+
+---
+
+## Agrégat
+
+✔ Une transaction = un agrégat.
+
+✔ Une Aggregate Root.
+
+✔ Un Repository.
+
+✔ Les invariants sont protégés.
+
+✔ Les autres agrégats sont référencés par leur ID.
+
+---
+
+# À retenir
+
+Le DDD ne cherche pas à modéliser la base de données.
+
+Il cherche à modéliser **le métier**, en définissant des frontières de cohérence (les agrégats) à l'intérieur de contextes métier cohérents (les Bounded Contexts).
