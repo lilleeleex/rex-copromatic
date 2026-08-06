@@ -3,3 +3,10 @@ Cela doit permettre de réaliser des vérifications
 La transaction doit etre enregistré par le repository racine de l'aggregat afin de garantir la cohésion de l'unité transactionnelle
 
 Les relations des entités permettent de garantir une integrite des données dans la couche bdd / Les aggrégats dans ce contexte peuvent permettre de redéfinir et respecter les limites cross agregats tout en se découplant des la couche bdd
+
+Relations cross agregats ou cross contexts => les references se font par Id
+
+Relations inter agregats => les references se font par objet
+
+
+BOUNDED CONTEXT est un domaine dans lequel une entité (ou un aggregat ?) s'exprime par un seul et meme langage
