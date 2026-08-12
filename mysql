@@ -1,0 +1,5 @@
+Les relations imbriquées peuvent ne pas trop poser d epb memory car les lignes sql sont proportionnelles à la dernière entité chargée
+Tu charges assemblee → resolutions → votes. Les lignes SQL sont ~ proportionnelles au nombre de votes. Coût linéaire, gérable.
+
+En revanche plusieurs OneToMany frères constituent un produit cartésien avec nb de lignes ≈ |indicateurs| × |evenements| × |votes|
+
