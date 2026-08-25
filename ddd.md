@@ -485,3 +485,4 @@ Le DDD ne cherche pas à modéliser la base de données.
 Il cherche à modéliser **le métier**, en définissant des frontières de cohérence (les agrégats) à l'intérieur de contextes métier cohérents (les Bounded Contexts).
 
 Le DDD split le domaine métier de la persistence via des aggregats et des mappers faisant le lien entre entites et aggregats. Dans notre cas pour plus de commodité dans la migration les aggregats seront les entités.
+Les relations des entités préservent l'intégrite de la bdd -> et une fois dans le métier on s'efforce de respecter les limites des aggrégats
