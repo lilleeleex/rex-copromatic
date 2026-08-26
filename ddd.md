@@ -489,4 +489,8 @@ Les relations des entités préservent l'intégrite de la bdd -> et une fois dan
 
 En hexagone intra-contexte, le port appartient à celui qui a besoin de la capa, l’adapter à celui qui la fournit.
 
+Oui. Dans un bounded context, un module Nest par agrégat est le mauvais grain. C’est ça qui te fait tourner en rond.
+
+Les agrégats (Evenement, Presence, Reclamation, Assemblee) restent des frontières de domaine : entités, factories, repos, ids. Nest, lui, c’est une frontière d’injection. Tes listeners, le guard syndic et ActivityMessagingService ont déjà besoin de plusieurs agrégats à la fois. Dès que tu découpes ça en EvenementModule / PresenceModule / AssembleeModule, tu recréés des cycles — d’où les forwardRef.
+
 
