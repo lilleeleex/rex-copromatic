@@ -493,4 +493,9 @@ Oui. Dans un bounded context, un module Nest par agrégat est le mauvais grain. 
 
 Les agrégats (Evenement, Presence, Reclamation, Assemblee) restent des frontières de domaine : entités, factories, repos, ids. Nest, lui, c’est une frontière d’injection. Tes listeners, le guard syndic et ActivityMessagingService ont déjà besoin de plusieurs agrégats à la fois. Dès que tu découpes ça en EvenementModule / PresenceModule / AssembleeModule, tu recréés des cycles — d’où les forwardRef.
 
+Un agrégat ne parle pas à un autre agrégat. Un scénario si. La confusion fréquente
+« Un service / use case Reclamation ne devrait parler qu’à ReclamationRepository » = modèle un service par table. En DDD, un use case suit un cas d’usage, pas un agrégat. Dès qu’il y a un lien inter-agrégats , l’application doit tenir les deux repos
+
+
+
 
