@@ -1,0 +1,7 @@
+Quand extraire, concrètement :
+
+Vers	Si…
+Méthode sur AssembleeRepository  -->  Tu veux cacher le QB (le bon prochain pas, même à un seul appelant)
+Helper partagé (style construireAppendsReclamation)  -->  Un 2ᵉ use case a besoin du même lookup
+Service domaine  -->  Il y a une règle métier au-delà de « existe + nature procuration »
+PieceJointeService  -->  Plusieurs flux HTTP partagent vraiment ce chargement — ce n’est pas le cas
