@@ -3,3 +3,13 @@ Tu charges assemblee → resolutions → votes. Les lignes SQL sont ~ proportion
 
 En revanche plusieurs OneToMany frères constituent un produit cartésien avec nb de lignes ≈ |indicateurs| × |evenements| × |votes|
 
+En SQL, un produit cartésien, c’est : tu combines chaque ligne d’un ensemble avec chaque ligne d’un autre.
+
+Ici, une seule requête fait deux LEFT JOIN sur le même pouvoir :
+
+pouvoir ⋈ votes
+pouvoir ⋈ procuration
+Le moteur ne « rattache » pas votes et procuration l’un à l’autre. Il produit toutes les combinaisons.
+
+Exemple : 1 pouvoir, 10 votes, 1 procuration → 10 lignes (chaque vote répété avec la même procuration). Avec 10 votes et 2 documents, ce serait 20 lignes, etc.
+
