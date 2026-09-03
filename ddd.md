@@ -496,6 +496,8 @@ Les agrégats (Evenement, Presence, Reclamation, Assemblee) restent des frontiè
 Un agrégat ne parle pas à un autre agrégat. Un scénario si. La confusion fréquente
 « Un service / use case Reclamation ne devrait parler qu’à ReclamationRepository » = modèle un service par table. En DDD, un use case suit un cas d’usage, pas un agrégat. Dès qu’il y a un lien inter-agrégats , l’application doit tenir les deux repos
 
+tes ensembles légers sont la bonne unit de travail. La racine Presence est seulement la unit de publication. Les deux ne se marchent pas dessus.
+
 
 
 
